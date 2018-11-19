@@ -1,25 +1,89 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+#Reproducible Research: Project 1
 
+Loading of data from file
+```{r load.data}
+raw.data <- read.csv(file = "activity.csv")
+step.data <- raw.data[!is.na(raw.data$steps),]
+```
 
-## Loading and preprocessing the data
+Calculate total number of steps taken per day
+```{r totalstep.data}
+totalstep.data <- with(step.data, aggregate(step.data$steps, by=list(date), FUN = mean))
+```
 
+Plot histogram of total number of step taken per day
+```{r meanstep.data}
+hist(totalstep.data$x, main = "Total number of steps taken per day",
+     xlab = "Total steps taken per day")
+```
 
+Calculate mean and median of the total number of steps taken per day
+```{r mean calculation}
+summary(totalstep.data$x)
+```
 
-## What is mean total number of steps taken per day?
+Calculate mean step per interval
+```{r mean step per interval}
+meandaily.data <- with(step.data, aggregate(step.data$steps, 
+                                            by=list(interval),
+                                            FUN=mean, na.rm=TRUE))
+```
 
+Plot average daily activity pattern
+```{r plot average daily acitivity pattern}
+library(ggplot2)
+meandaily.plot <- ggplot(meandaily.data, aes(x=Group.1, y=x), 
+                        xlabs = "Interval", 
+                        ylab="Average Number of Steps")
+plot(x=meandaily.data$Group.1, y=meandaily.data$x, xlab = "Interval",
+     ylab = "Average Number of Steps", 
+     main = "Average Number of Steps per Interval", type = "l")
 
+```
 
-## What is the average daily activity pattern?
+Identify the interval that contains the maximum number of steps
+```{r interval with max steps}
+maxstep <- max(meandaily.data$x)
+meandaily.data[meandaily.data$x == maxstep, 1] 
+```
 
+##Imputing NA.
 
+The strategy for imputing NAs would be substitute the missing steps with the matching average 5-minute interval.
+```{r imput NAs}
+## Load library for ddply function
+library(plyr)
+avg.data <- ddply(step.data, .(interval), summarise, steps = mean(steps))
 
-## Imputing missing values
+## Replace NAs with matching intervals of the day
+na.data <- raw.data[is.na(raw.data$steps),]
+test.condition <- match(avg.data$interval, na.data$interval)
+na.data[!is.na(test.condition), "steps"] <- avg.data[na.omit(test.condition), "steps"]
+```
 
+Creating new dataset
+```{R Create new dataset via merge}
+merge.data <- rbind(step.data, na.data)
+```
 
+Make a histogram of the total number of step taken each day
+```{R Create Histogram of merged dataset}
+totalstep2.data <- aggregate(merge.data$steps ~ merge.data$date, FUN= mean)
+hist(totalstep2.data$`merge.data$steps`, main = "Total number of steps      taken per day",
+     xlab = "Total steps taken per day")
+```
 
-## Are there differences in activity patterns between weekdays and weekends?
+Report mean and median of the total number of steps taken per day
+```{R Report mean and medium of merged dataset per day}
+summary(merge.data$steps)
+```
+
+Report differences (if any) between weekday and weekend
+```{R Report comparison of weekday to weekend}
+library(plyr)
+library(lattice)
+merge.data$day <- weekdays(as.Date(merge.data$date))
+merge.data$dayCat <- ifelse(merge.data$day %in% c("Saturday",                                      "Sunday"), "Weekend", "Weekday")
+WeekdayVWeekend.data <- ddply(merge.data, .(interval, dayCat), summarise, steps = mean(steps))
+xyplot(steps~interval|dayCat, data = WeekdayVWeekend.data, type="l", layout=c(1,2), main="Average Steps per interval Based on Type of Day", ylab="Average Number of Steps", xlab="Interval")
+```
