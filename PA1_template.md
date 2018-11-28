@@ -1,7 +1,6 @@
 ---
 output: 
   html_document: 
-    fig_caption: yes
     keep_md: yes
 ---
 #Reproducible Research: Project 1
@@ -59,7 +58,7 @@ plot(x=meandaily.data$Group.1, y=meandaily.data$x, xlab = "Interval",
      main = "Average Number of Steps per Interval", type = "l")
 ```
 
-![](PA1_template_files/figure-html/plot.average.daily.acitivity.pattern-1.png)<!-- -->
+![](PA1_template_files/figure-html/plot average daily acitivity pattern-1.png)<!-- -->
 
 Identify the interval that contains the maximum number of steps
 
