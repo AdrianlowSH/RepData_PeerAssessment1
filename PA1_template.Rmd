@@ -1,12 +1,10 @@
+---
+output: 
+  html_document: 
+    fig_caption: yes
+    keep_md: yes
+---
 #Reproducible Research: Project 1
----
-title: Reproducible Research Project 1
-author: Adrian Low
-date: November 28, 2018
-output:
-        html document:
-                keep_md: true
----
 
 Loading of data from file
 ```{r load.data}
