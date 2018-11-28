@@ -100,7 +100,7 @@ hist(totalstep2.data$`merge.data$steps`, main = "Total number of steps      take
      xlab = "Total steps taken per day")
 ```
 
-![](PA1_template_files/figure-html/Create Histogram of merged dataset-1.png)<!-- -->
+![](PA1_template_files/figure-html/CreateHistogramofmergeddataset-1.png)<!-- -->
 
 Report mean and median of the total number of steps taken per day
 
@@ -124,4 +124,4 @@ WeekdayVWeekend.data <- ddply(merge.data, .(interval, dayCat), summarise, steps 
 xyplot(steps~interval|dayCat, data = WeekdayVWeekend.data, type="l", layout=c(1,2), main="Average Steps per interval Based on Type of Day", ylab="Average Number of Steps", xlab="Interval")
 ```
 
-![](PA1_template_files/figure-html/Report comparison of weekday to weekend-1.png)<!-- -->
+![](PA1_template_files/figure-html/Reportcomparisonofweekdaytoweekend-1.png)<!-- -->
